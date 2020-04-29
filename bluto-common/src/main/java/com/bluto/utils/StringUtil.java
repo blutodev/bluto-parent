@@ -19,7 +19,7 @@ public class StringUtil {
 	 * @param str
 	 * @return
 	 */
-	static public boolean isBlank(String str) {
+	static public boolean isBlankD(String str) {
 		if(str==null || "".equals(str.trim())) 
 			return true;
 		return false;
