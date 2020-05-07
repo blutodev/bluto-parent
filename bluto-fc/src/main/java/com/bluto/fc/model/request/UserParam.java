@@ -9,7 +9,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AgentParam extends BaseCommonParam{
+public class UserParam extends BaseCommonParam{
 
-    private String agentId;
+    private String userName;
+    private String password;
 }

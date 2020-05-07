@@ -38,6 +38,13 @@ public class JsonResult {
         return jsonResult;
     }
 
+    public static JsonResult success() {
+        JsonResult jsonResult = new JsonResult();
+        jsonResult.setSuccess(true);
+        jsonResult.setBusinessCode("1");
+        return jsonResult;
+    }
+
     public static JsonResult errorData(String errorCode, MessageSource messageSource, Object data, Object... params) {
         JsonResult jsonResult = new JsonResult();
         jsonResult.setSuccess(false);

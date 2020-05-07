@@ -16,9 +16,9 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
-                        connectionURL="jdbc:oracle:thin:@192.168.1.176:1521:qdmarket"
-                        userId="firsthand"
-                        password="FIRSTHAND">
+                        connectionURL="jdbc:oracle:thin:@192.168.31.21:1521:rnt"
+                        userId="RET_U1"
+                        password="nK123456">
         </jdbcConnection>
 
         <javaTypeResolver>
@@ -40,7 +40,7 @@
         </sqlMapGenerator>
 
         <!--生成mappers-->
-        <javaClientGenerator targetPackage="com.bluto.fc.mapper"
+        <javaClientGenerator targetPackage="com.bluto.fc.dao"
                              targetProject="${generator.path}/src/main/java"
                              type="XMLMAPPER">
             <property name="enableSubPackages" value="true"/>
@@ -64,8 +64,8 @@
             <!--<generatedKey column="ID" identity="true" sqlStatement="SqlServer"/>-->
         <!--</table>-->
 
-        <table tableName="AGENT" enableSelectByPrimaryKey="true" enableCountByExample="true" enableSelectByExample="true">
-            <property name="useActualColumnNames" value="true" />
+        <table tableName="T_USER" enableSelectByPrimaryKey="true" enableCountByExample="true" enableSelectByExample="true">
+            <property name="mapUnderscoreToCamelCase" value="true" />
             <generatedKey column="AGENT_ID" identity="true" sqlStatement="Oracle"/>
         </table>
 
