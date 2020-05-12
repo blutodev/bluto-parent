@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class FcDataSourceConfig {
 
     static final String PACKAGE = "com.bluto.fc.dao";
-    static final String MAPPER_LOCATION = "classpath:com/bluto/fc/mapper/**/*.xml";
+    static final String MAPPER_LOCATION = "classpath:com/bluto/fc/mapper/*.xml";
 
     @Value("${bluto.rent.datasource.driverClassName}")
     private String driverClass;
