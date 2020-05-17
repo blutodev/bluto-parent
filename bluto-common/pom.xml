@@ -30,7 +30,20 @@
             <version>${hutool.version}</version>
         </dependency>
     </dependencies>
+
+
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.jks</include>
+                    <include>**/*.cer</include>
+                    <include>**/*.store</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
