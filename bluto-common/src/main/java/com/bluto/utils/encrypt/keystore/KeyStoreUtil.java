@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 
+import javax.crypto.SecretKey;
 import java.io.*;
 import java.security.*;
 import java.security.cert.Certificate;
@@ -53,26 +54,72 @@ public class KeyStoreUtil {
         return keyStore;
     }
 
-
-    public static PrivateKey getPrivateKey(KeyStore keyStore, String alias, String aliasKey)
+    /**
+     * 获得私钥（非对称加密）
+     * @param keyStore 密钥库
+     * @param alias 别名
+     * @param aliasKey 别名密码
+     * @return
+     * @throws UnrecoverableEntryException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
+    public static PrivateKey readPrivateKey(KeyStore keyStore, String alias, String aliasKey)
             throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
-        KeyStore.ProtectionParameter protParam =
-                new KeyStore.PasswordProtection(aliasKey.toCharArray());
         KeyStore.PrivateKeyEntry pkEntry =
-                (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, protParam);
+                (KeyStore.PrivateKeyEntry) readEntry(keyStore, KeyRep.Type.PRIVATE, alias, aliasKey);
         PrivateKey pk = pkEntry.getPrivateKey();
         return pk;
     }
 
-    public static Certificate getTrustedCertificate(KeyStore keyStore, String alias, String aliasKey)
+    /**
+     * 获得密钥（对称加密时）
+     * @param keyStore 密钥库
+     * @param alias 别名
+     * @param aliasKey 别名密码
+     * @return
+     * @throws UnrecoverableEntryException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
+    public static SecretKey readSecretKey(KeyStore keyStore, String alias, String aliasKey)
             throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
-        // "main" java.lang.UnsupportedOperationException: trusted certificate entries are not password-protected
-        KeyStore.ProtectionParameter protParam =
-                new KeyStore.PasswordProtection(aliasKey.toCharArray());
-        KeyStore.TrustedCertificateEntry CaEntry =
-                (KeyStore.TrustedCertificateEntry)keyStore.getEntry(alias, null);
-        Certificate cert = CaEntry.getTrustedCertificate();
+        KeyStore.SecretKeyEntry skEntry =
+                (KeyStore.SecretKeyEntry) readEntry(keyStore, KeyRep.Type.SECRET, alias, aliasKey);
+        SecretKey secretKey = skEntry.getSecretKey();
+        return secretKey;
+    }
+
+    /**
+     * 获得颁发的可信赖证书
+     * @param keyStore 密钥库
+     * @param alias 别名
+     * @param aliasKey 别名密码
+     * @return
+     * @throws UnrecoverableEntryException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
+    public static X509Certificate readTrustedCertificate(KeyStore keyStore, String alias, String aliasKey)
+            throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
+        // trusted certificate entries are not password-protected
+        KeyStore.TrustedCertificateEntry caEntry =
+                (KeyStore.TrustedCertificateEntry) readEntry(keyStore, KeyRep.Type.PUBLIC, alias, null);
+        X509Certificate cert = (X509Certificate) caEntry.getTrustedCertificate();
         return cert;
+    }
+
+    protected static KeyStore.Entry readEntry(KeyStore keyStore, KeyRep.Type keyType, String alias, String aliasKey)
+            throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
+        KeyStore.Entry entry = null;
+        if(keyType.equals(KeyRep.Type.PRIVATE) || keyType.equals(KeyRep.Type.SECRET)){
+            KeyStore.ProtectionParameter potParam =
+                    new KeyStore.PasswordProtection(aliasKey.toCharArray());
+            entry = keyStore.getEntry(alias, potParam);
+        }else if(keyType.equals(KeyRep.Type.PUBLIC)){
+            entry = keyStore.getEntry(alias, null);
+        }
+        return entry;
     }
 
     public static void main(String[] args) {
@@ -85,14 +132,14 @@ public class KeyStoreUtil {
 
             //java.security.UnrecoverableKeyException: Cannot recover key 检查alias密码是否正确
 
-            PrivateKey pk = getPrivateKey(keyStore, KEYSTORE_ALIAS, KEYSTORE_ALIAS_PASSWORD);
+            PrivateKey pk = readPrivateKey(keyStore, KEYSTORE_ALIAS, KEYSTORE_ALIAS_PASSWORD);
             String algorithm = pk.getAlgorithm();
             String encoded = HexUtil.encodeHexStr(pk.getEncoded());
             System.out.println("algorithm=" + algorithm);
             System.out.println("encoded=" + encoded);
 
-            X509Certificate x509 = (X509Certificate)getTrustedCertificate
-                    (keyStore, "ca_trust_cert1", "123456");
+            X509Certificate x509 = (X509Certificate)readTrustedCertificate
+                    (keyStore, "ca_trust_cert1", null);
             int version = x509.getVersion();
             Principal issuerDN = x509.getIssuerDN();
             Principal subjectDN = x509.getSubjectDN();
