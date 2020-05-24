@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.aip.ocr.AipOcr;
+import com.bluto.utils.encrypt.Base64Util;
 import com.bluto.utils.exception.BltUtilException;
 import com.bluto.utils.exception.ErrorInfo;
 
@@ -36,9 +37,9 @@ public class BaiduOcr implements BltOcr {
     public BaiduOcr(){
         //初始化百度orc对象
         Props props = Props.getProp(OCR_PROPS_FILE, Charset.defaultCharset());
-        String appId = props.getStr(BAIDU_APPID);
-        String apiKey = props.getStr(BAIDU_APIKEY);
-        String secretKey = props.getStr(BAIDU_SECRET_KEY);
+        String appId = Base64Util.decode(props.getStr(BAIDU_APPID));
+        String apiKey = Base64Util.decode(props.getStr(BAIDU_APIKEY));
+        String secretKey = Base64Util.decode(props.getStr(BAIDU_SECRET_KEY));
         if(null == client){
             synchronized (BaiduOcr.class) {
                 client = new AipOcr(appId, apiKey, secretKey);
