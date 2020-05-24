@@ -120,10 +120,17 @@
         </dependency>
 
 		<!-- https://mvnrepository.com/artifact/oracle/ojdbc14 -->
-		<dependency>
+		<!--<dependency>
 			<groupId>oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
 			<version>10.2.0.4</version>
+		</dependency>
+		-->
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.20</version>
 		</dependency>
 
 		<dependency>
